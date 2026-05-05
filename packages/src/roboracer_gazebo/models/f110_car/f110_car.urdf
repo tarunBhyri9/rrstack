@@ -1,0 +1,494 @@
+<?xml version="1.0"?>
+<robot name="f110_car">
+
+  <!-- ======================================================
+       F110 Car URDF — based on AuNa structure
+       ROS2 Humble + Gazebo Classic
+       Hierarchy:
+         base_link → chassis
+         chassis → left_steering → left_wheel_front
+         chassis → right_steering → right_wheel_front
+         chassis → left_wheel_back
+         chassis → right_wheel_back
+       ====================================================== -->
+
+  <!-- ===== BASE LINK (empty placeholder) ===== -->
+  <link name="base_link"/>
+
+  <!-- ===== CHASSIS (the car body) ===== -->
+  <joint name="base_link_joint" type="fixed">
+    <origin xyz="0.16 0 0.05" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="chassis"/>
+  </joint>
+
+  <link name="chassis">
+    <inertial>
+      <mass value="3.5"/>
+      <origin xyz="0 0 0.0225" rpy="0 0 0"/>
+      <inertia ixx="0.012375" ixy="0" ixz="0"
+               iyy="0.073208" iyz="0"
+               izz="0.079567"/>
+    </inertial>
+    <collision>
+      <origin xyz="0 0 0.0225" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.49 0.18 0.1"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/tarunbhyri9/project_repo/roboracer_state_estimation/packages/src/roboracer_gazebo/models/f110_car/meshes/car.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- ===== STEERING WHEEL (cosmetic, plugin needs it) ===== -->
+  <joint name="steering_wheel_joint" type="continuous">
+    <origin xyz="0.105 0 0.135" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="steering_wheel"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-7.85" upper="7.85" effort="10000000" velocity="1000000"/>
+  </joint>
+
+  <link name="steering_wheel">
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="1.667e-6" ixy="0" ixz="0"
+               iyy="1.667e-6" iyz="0"
+               izz="1.667e-6"/>
+    </inertial>
+    <collision>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- ===================================================
+       FRONT LEFT — steering link + wheel
+       =================================================== -->
+  <joint name="left_steering_hinge" type="continuous">
+    <origin xyz="0.16 0.1055 0" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="left_steering"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.0" upper="1.0" effort="10" velocity="100"/>
+  </joint>
+
+  <link name="left_steering">
+    <inertial>
+      <mass value="0.07"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="4.667e-6" ixy="0" ixz="0"
+               iyy="4.667e-6" iyz="0"
+               izz="4.667e-6"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.01"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="left_wheel_front_hinge" type="continuous">
+    <origin xyz="0 0.001 0" rpy="0 0 0"/>
+    <parent link="left_steering"/>
+    <child link="left_wheel_front"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="20" velocity="500"/>
+  </joint>
+
+  <link name="left_wheel_front">
+    <inertial>
+      <mass value="0.2"/>
+      <origin xyz="0 0.02 0" rpy="1.5707 0 0"/>
+      <inertia ixx="0.00013" ixy="0" ixz="0"
+               iyy="0.00013" iyz="0"
+               izz="0.00025"/>
+    </inertial>
+    <collision>
+      <origin xyz="0 0.02 0" rpy="1.5707 0 0"/>
+      <geometry>
+        <cylinder length="0.045" radius="0.05"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0.02 0" rpy="0 0 3.14159"/>
+      <geometry>
+        <mesh filename="file:///home/tarunbhyri9/project_repo/roboracer_state_estimation/packages/src/roboracer_gazebo/models/f110_car/meshes/wheel.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- ===================================================
+       FRONT RIGHT — steering link + wheel
+       =================================================== -->
+  <joint name="right_steering_hinge" type="continuous">
+    <origin xyz="0.16 -0.1055 0" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="right_steering"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.0" upper="1.0" effort="10" velocity="100"/>
+  </joint>
+
+  <link name="right_steering">
+    <inertial>
+      <mass value="0.07"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="4.667e-6" ixy="0" ixz="0"
+               iyy="4.667e-6" iyz="0"
+               izz="4.667e-6"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.01"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="right_wheel_front_hinge" type="continuous">
+    <origin xyz="0 -0.001 0" rpy="0 0 0"/>
+    <parent link="right_steering"/>
+    <child link="right_wheel_front"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="20" velocity="500"/>
+  </joint>
+
+  <link name="right_wheel_front">
+    <inertial>
+      <mass value="0.2"/>
+      <origin xyz="0 -0.02 0" rpy="1.5707 0 0"/>
+      <inertia ixx="0.00013" ixy="0" ixz="0"
+               iyy="0.00013" iyz="0"
+               izz="0.00025"/>
+    </inertial>
+    <collision>
+      <origin xyz="0 -0.02 0" rpy="1.5707 0 0"/>
+      <geometry>
+        <cylinder length="0.045" radius="0.05"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 -0.02 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/tarunbhyri9/project_repo/roboracer_state_estimation/packages/src/roboracer_gazebo/models/f110_car/meshes/wheel.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- ===================================================
+       REAR LEFT WHEEL (no steering — direct to chassis)
+       =================================================== -->
+  <joint name="left_wheel_back_hinge" type="continuous">
+    <origin xyz="-0.16 0.1055 0" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="left_wheel_back"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="20" velocity="500"/>
+  </joint>
+
+  <link name="left_wheel_back">
+    <inertial>
+      <mass value="0.2"/>
+      <origin xyz="0 0.021 0" rpy="1.5707 0 0"/>
+      <inertia ixx="0.00013" ixy="0" ixz="0"
+               iyy="0.00013" iyz="0"
+               izz="0.00025"/>
+    </inertial>
+    <collision>
+      <origin xyz="0 0.021 0" rpy="1.5707 0 0"/>
+      <geometry>
+        <cylinder length="0.045" radius="0.05"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0.021 0" rpy="0 0 3.14159"/>
+      <geometry>
+        <mesh filename="file:///home/tarunbhyri9/project_repo/roboracer_state_estimation/packages/src/roboracer_gazebo/models/f110_car/meshes/wheel.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- ===================================================
+       REAR RIGHT WHEEL (no steering — direct to chassis)
+       =================================================== -->
+  <joint name="right_wheel_back_hinge" type="continuous">
+    <origin xyz="-0.16 -0.1055 0" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="right_wheel_back"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="20" velocity="500"/>
+  </joint>
+
+  <link name="right_wheel_back">
+    <inertial>
+      <mass value="0.2"/>
+      <origin xyz="0 -0.021 0" rpy="1.5707 0 0"/>
+      <inertia ixx="0.00013" ixy="0" ixz="0"
+               iyy="0.00013" iyz="0"
+               izz="0.00025"/>
+    </inertial>
+    <collision>
+      <origin xyz="0 -0.021 0" rpy="1.5707 0 0"/>
+      <geometry>
+        <cylinder length="0.045" radius="0.05"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 -0.021 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/tarunbhyri9/project_repo/roboracer_state_estimation/packages/src/roboracer_gazebo/models/f110_car/meshes/wheel.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- ===================================================
+       SENSORS
+       =================================================== -->
+
+  <!-- Camera (RealSense) -->
+  <joint name="camera_joint" type="fixed">
+    <origin xyz="0.21 0 0.075" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="camera"/>
+  </joint>
+
+  <link name="camera">
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="2.4e-4" ixy="0" ixz="0"
+               iyy="9.5e-6"  iyz="0"
+               izz="2.4e-4"/>
+    </inertial>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.03 0.17 0.03"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 1.57"/>
+      <geometry>
+        <mesh filename="file:///home/tarunbhyri9/project_repo/roboracer_state_estimation/packages/src/roboracer_gazebo/models/f110_car/meshes/realsense.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- Lidar (Hokuyo) -->
+  <joint name="laser_joint" type="fixed">
+    <origin xyz="0.21 0 0.135" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="laser"/>
+  </joint>
+
+  <link name="laser">
+    <inertial>
+      <mass value="0.1"/>
+      <origin xyz="0 0 0.0225" rpy="0 0 0"/>
+      <inertia ixx="1.67e-4" ixy="0" ixz="0"
+               iyy="1.67e-4" iyz="0"
+               izz="1.67e-4"/>
+    </inertial>
+    <collision>
+      <origin xyz="0 0 0.0225" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0.0225" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/tarunbhyri9/project_repo/roboracer_state_estimation/packages/src/roboracer_gazebo/models/f110_car/meshes/hokuyo.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- IMU -->
+  <joint name="imu_joint" type="fixed">
+    <origin xyz="0 0 0.135" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="imu_link"/>
+  </joint>
+
+  <link name="imu_link">
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="1.667e-7" ixy="0" ixz="0"
+               iyy="1.667e-7" iyz="0"
+               izz="1.667e-7"/>
+    </inertial>
+  </link>
+
+  <!-- ===================================================
+       GAZEBO PLUGINS
+       =================================================== -->
+
+  <gazebo reference="left_wheel_front">
+    <mu1>0.9</mu1>
+    <mu2>0.9</mu2>
+  </gazebo>
+  <gazebo reference="right_wheel_front">
+    <mu1>0.9</mu1>
+    <mu2>0.9</mu2>
+  </gazebo>
+  <gazebo reference="left_wheel_back">
+    <mu1>0.9</mu1>
+    <mu2>0.9</mu2>
+  </gazebo>
+  <gazebo reference="right_wheel_back">
+    <mu1>0.9</mu1>
+    <mu2>0.9</mu2>
+  </gazebo>
+
+  <gazebo reference="left_steering">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+  <gazebo reference="right_steering">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+
+  <!-- IMU sensor -->
+  <gazebo reference="imu_link">
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>200</update_rate>
+      <visualize>false</visualize>
+      <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+        <ros>
+          <remapping>~/out:=imu</remapping>
+        </ros>
+        <initial_orientation_as_reference>false</initial_orientation_as_reference>
+        <frame_name>imu_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- Laser -->
+  <gazebo reference="laser">
+    <sensor type="ray" name="laser">
+      <always_on>true</always_on>
+      <update_rate>60</update_rate>
+      <visualize>false</visualize>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>1080</samples>
+            <resolution>1</resolution>
+            <min_angle>-2.35619</min_angle>
+            <max_angle>2.35619</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.2</min>
+          <max>30</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="laser_plugin" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <remapping>~/out:=scan</remapping>
+        </ros>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>laser</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- Camera -->
+  <gazebo reference="camera">
+    <sensor name="camera" type="camera">
+      <always_on>true</always_on>
+      <update_rate>30</update_rate>
+      <visualize>false</visualize>
+      <camera name="head">
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>800</width>
+          <height>800</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>300</far>
+        </clip>
+      </camera>
+      <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+        <camera_name>camera</camera_name>
+        <frame_name>camera</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- Joint state publisher -->
+  <gazebo>
+    <plugin name="robot_joint_state" filename="libgazebo_ros_joint_state_publisher.so">
+      <ros>
+        <remapping>~/out:=joint_states</remapping>
+      </ros>
+      <update_rate>100</update_rate>
+      <joint_name>left_wheel_front_hinge</joint_name>
+      <joint_name>right_wheel_front_hinge</joint_name>
+      <joint_name>left_wheel_back_hinge</joint_name>
+      <joint_name>right_wheel_back_hinge</joint_name>
+      <joint_name>left_steering_hinge</joint_name>
+      <joint_name>right_steering_hinge</joint_name>
+      <joint_name>steering_wheel_joint</joint_name>
+    </plugin>
+  </gazebo>
+
+  <!-- Ackermann drive -->
+  <gazebo>
+    <plugin name="ackermann_drive" filename="libgazebo_ros_ackermann_drive.so">
+      <ros>
+        <remapping>cmd_vel:=cmd_vel</remapping>
+        <remapping>odom:=odom</remapping>
+        <remapping>distance:=distance</remapping>
+      </ros>
+      <update_rate>100.0</update_rate>
+
+      <front_left_joint>left_wheel_front_hinge</front_left_joint>
+      <front_right_joint>right_wheel_front_hinge</front_right_joint>
+      <rear_left_joint>left_wheel_back_hinge</rear_left_joint>
+      <rear_right_joint>right_wheel_back_hinge</rear_right_joint>
+      <left_steering_joint>left_steering_hinge</left_steering_joint>
+      <right_steering_joint>right_steering_hinge</right_steering_joint>
+      <steering_wheel_joint>steering_wheel_joint</steering_wheel_joint>
+
+      <max_steer>0.6458</max_steer>
+      <max_steering_angle>7.85</max_steering_angle>
+      <max_speed>10.0</max_speed>
+
+      <left_steering_pid_gain>5 0 0.3</left_steering_pid_gain>
+      <left_steering_i_range>0 0</left_steering_i_range>
+      <right_steering_pid_gain>5 0 0.3</right_steering_pid_gain>
+      <right_steering_i_range>0 0</right_steering_i_range>
+      <linear_velocity_pid_gain>0.5 0 0</linear_velocity_pid_gain>
+      <linear_velocity_i_range>0 0</linear_velocity_i_range>
+
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>false</publish_wheel_tf>
+      <publish_distance>true</publish_distance>
+
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_link</robot_base_frame>
+    </plugin>
+  </gazebo>
+
+</robot>
